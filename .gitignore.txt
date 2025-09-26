@@ -1,0 +1,25 @@
+# Build outputs
+bin/
+build/
+debug/
+release/
+obj/
+*.o
+*.obj
+*.exe
+*.dll
+*.lib
+*.so
+*.a
+
+# Code::Blocks
+*.layout
+*.depend
+*.cbp.user
+*.workspace
+*.user
+
+# OS temporary files
+.DS_Store
+Thumbs.db
+*~
