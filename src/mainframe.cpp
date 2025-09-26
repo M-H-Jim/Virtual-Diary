@@ -34,7 +34,7 @@ mainFrame::mainFrame(const wxString& title) : wxFrame(NULL, wxID_ANY, title) {
     SetStatusText("Welcome to Virtual Diary!");
     
     
-    binding();
+    Binding();
     
 }
 
@@ -47,7 +47,7 @@ mainFrame::mainFrame(const wxString& title) : wxFrame(NULL, wxID_ANY, title) {
 
 
 
-void mainFrame::binding() {
+void mainFrame::Binding() {
     
     Bind(wxEVT_MENU, &mainFrame::OnHello, this, ID_HELLO);
     Bind(wxEVT_MENU, &mainFrame::OnAbout, this, wxID_ABOUT);

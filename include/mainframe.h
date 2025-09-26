@@ -44,7 +44,7 @@ class mainFrame : public wxFrame {
         
         
         
-        void binding();
+        void Binding();
     
     
 };
