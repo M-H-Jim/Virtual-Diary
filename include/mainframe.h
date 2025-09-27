@@ -17,6 +17,7 @@ class mainFrame : public wxFrame {
         
         wxMenu *menuFile;
         wxMenu *menuAbout;
+        wxMenu *menuSettings;
         
         wxMenuBar *menuBar;
         
@@ -33,6 +34,7 @@ class mainFrame : public wxFrame {
         void OnHello(wxCommandEvent& evt);
         void OnExit(wxCommandEvent& evt);
         void OnAbout(wxCommandEvent& evt);
+        void OnChangeLoginData(wxCommandEvent& evt);
         
         
         

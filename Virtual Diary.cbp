@@ -63,6 +63,15 @@
 		<Linker>
 			<Add option="-mthreads" />
 		</Linker>
+		<Unit filename="include/login.h" />
+		<Unit filename="include/logindatadialog.h" />
+		<Unit filename="include/mainframe.h" />
+		<Unit filename="src/login.cpp" />
+		<Unit filename="src/logindatadialog.cpp" />
+		<Unit filename="src/mainframe.cpp" />
+		<Unit filename="wx.rc">
+			<Option compilerVar="WINDRES" />
+		</Unit>
 		<Extensions />
 	</Project>
 </CodeBlocks_project_file>

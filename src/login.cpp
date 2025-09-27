@@ -1,6 +1,8 @@
 #include "../include/login.h"
 
 
+#include <fstream>
+
 
 loginDialog::loginDialog(const wxString& title) : wxDialog(NULL, wxID_ANY, "Login", 
                                                            wxDefaultPosition, wxSize(600, 400), 
@@ -43,6 +45,7 @@ loginDialog::loginDialog(const wxString& title) : wxDialog(NULL, wxID_ANY, "Logi
     
     
     SetSizerAndFit(sizer);
+    SetSize(wxSize(600, 400));
     
     
     Binding();
@@ -61,7 +64,16 @@ wxString loginDialog::GetPassword() const {
 
 void loginDialog::OnLogin(wxCommandEvent& evt) {
     
-    if(GetUsername() == "f" && GetPassword() == "5") {
+    std::ifstream file("logindata.txt");
+    std::string username, password;
+    
+    if(file.is_open()) {
+        std::getline(file, username);
+        std::getline(file, password);
+        file.close();
+    }
+    
+    if(GetUsername().ToStdString() == username && GetPassword().ToStdString() == password) {
         EndModal(wxID_OK);
     }
     else {
