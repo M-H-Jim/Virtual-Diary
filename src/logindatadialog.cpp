@@ -112,7 +112,7 @@ void loginDataDialog::OnCancel(wxCommandEvent& evt) {
 
 void loginDataDialog::LoadInformation() {
     
-    std::ifstream file("logindata.txt");
+    std::ifstream file(GetLoginDataPath().ToStdString());
     
     if(file.is_open()) {
         
@@ -133,7 +133,7 @@ void loginDataDialog::LoadInformation() {
 
 bool loginDataDialog::CheckOldInformation(const wxString& oldUsername, const wxString& oldPassword) {
     
-    std::ifstream file("logindata.txt");
+    std::ifstream file(GetLoginDataPath().ToStdString());
     if(!file.is_open()) return false;
     
     std::string storedUserName, storedPassword;
@@ -146,7 +146,7 @@ bool loginDataDialog::CheckOldInformation(const wxString& oldUsername, const wxS
 }
 
 void loginDataDialog::SaveInformation(const wxString& newUserName, const wxString& newPassword) {
-    std::ofstream file("logindata.txt");
+    std::ofstream file(GetLoginDataPath().ToStdString());
     if(file.is_open()) {
         file << newUserName.ToStdString() << std::endl;
         file << newPassword.ToStdString() << std::endl;
@@ -163,7 +163,16 @@ void loginDataDialog::Binding() {
 
 
 
+wxString loginDataDialog::GetLoginDataPath() {
+    
+    wxString exeDir = wxFileName(wxStandardPaths::Get().GetExecutablePath()).GetPath();
 
+    wxFileName fileName(exeDir, "logindata.txt");
+    fileName.AppendDir("info");
+    
+    return fileName.GetFullPath();
+    
+}
 
 
 

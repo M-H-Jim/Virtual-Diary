@@ -48,6 +48,9 @@ class loginDataDialog : public wxDialog {
         bool CheckOldInformation(const wxString& oldUserName, const wxString& oldPassword);
         void SaveInformation(const wxString& newUserName, const wxString& newPassword);
         
+        static wxString GetLoginDataPath();
+        
+        
         
         void Binding();
         
