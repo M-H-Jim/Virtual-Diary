@@ -1,6 +1,8 @@
 #include "../include/mainframe.h"
 #include "../include/logindatadialog.h"
 
+#include <wx/splitter.h>
+
 
 enum {
     ID_HELLO = wxID_HIGHEST + 1,
@@ -44,6 +46,32 @@ mainFrame::mainFrame(const wxString& title) : wxFrame(NULL, wxID_ANY, title) {
     
     SetMenuBar(menuBar);
     
+    
+    
+    noteBook = new wxAuiNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 
+                                 wxAUI_NB_DEFAULT_STYLE & 
+                                 ~(wxAUI_NB_CLOSE_ON_ALL_TABS | wxAUI_NB_CLOSE_ON_ACTIVE_TAB));
+    
+    diaryPanel = new wxPanel(noteBook);
+    SetupDiaryUI(diaryPanel);
+    
+    phonebookPanel = new wxPanel(noteBook);
+    SetupPhonebookUI(phonebookPanel);
+    
+    
+    noteBook->AddPage(diaryPanel, "Diary");
+    noteBook->AddPage(phonebookPanel, "Phonebook");
+    
+    
+    sizer = new wxBoxSizer(wxVERTICAL);
+    sizer->Add(noteBook, 1, wxEXPAND);
+    this->SetSizer(sizer);
+    
+    
+    
+    
+    
+    
     CreateStatusBar();
     SetStatusText("Welcome to Virtual Diary!");
     
@@ -86,6 +114,50 @@ void mainFrame::OnChangeLoginData(wxCommandEvent& evt) {
     loginDataDialog dlg("Change Username / Password");
     dlg.ShowModal();
 }
+
+
+
+
+void mainFrame::SetupDiaryUI(wxPanel *panel) {
+    
+    wxSplitterWindow* splitter = new wxSplitterWindow(panel, wxID_ANY);
+
+    wxListBox* notesList = new wxListBox(splitter, wxID_ANY);
+    notesList->AppendString("2025-09-25: My first note");
+    notesList->AppendString("2025-09-26: Another entry");
+    notesList->AppendString("2025-09-27: Today's note");
+
+    wxTextCtrl* diaryText = new wxTextCtrl(splitter, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE);
+
+    
+    splitter->SplitVertically(notesList, diaryText);
+
+    
+    splitter->SetSashPosition(200);
+    splitter->SetMinimumPaneSize(100); 
+
+    
+    wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
+    sizer->Add(splitter, 1, wxEXPAND);
+    panel->SetSizer(sizer);
+
+}
+
+
+void mainFrame::SetupPhonebookUI(wxPanel *panel) {
+    
+    wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
+
+    wxStaticText* label = new wxStaticText(panel, wxID_ANY, "Phonebook Tab - Manage contacts here");
+    sizer->Add(label, 0, wxALL | wxCENTER, 20);
+
+    panel->SetSizer(sizer);
+    
+}
+
+
+
+
 
 
 
