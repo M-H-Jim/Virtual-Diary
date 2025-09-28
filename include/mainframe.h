@@ -4,6 +4,7 @@
 
 
 #include <wx/wx.h>
+#include <wx/aui/aui.h>
 
 class mainFrame : public wxFrame {
     
@@ -13,7 +14,7 @@ class mainFrame : public wxFrame {
     
     private:
         
-        // MenuBar
+        // MenuBar START
         
         wxMenu *menuFile;
         wxMenu *menuAbout;
@@ -21,12 +22,25 @@ class mainFrame : public wxFrame {
         
         wxMenuBar *menuBar;
         
+        // MenuBar END
+        
+        // Notebook START
+        
+        wxAuiNotebook *noteBook;
+        wxPanel *diaryPanel;
+        wxPanel *phonebookPanel;
         
         
         
+        void SetupDiaryUI(wxPanel *panel);
+        void SetupPhonebookUI(wxPanel *panel);
+        
+        
+        // Notebook END
         
         
         
+        wxBoxSizer *sizer;
         
         
         
