@@ -2,6 +2,9 @@
 
 
 #include <fstream>
+#include <wx/stdpaths.h>
+#include <wx/filename.h>
+
 
 
 loginDialog::loginDialog(const wxString& title) : wxDialog(NULL, wxID_ANY, "Login", 
@@ -64,7 +67,13 @@ wxString loginDialog::GetPassword() const {
 
 void loginDialog::OnLogin(wxCommandEvent& evt) {
     
-    std::ifstream file("logindata.txt");
+    
+    wxString exeDir = wxFileName(wxStandardPaths::Get().GetExecutablePath()).GetPath();
+
+    wxFileName fileName(exeDir, "logindata.txt");
+    fileName.AppendDir("info");
+    
+    std::ifstream file(fileName.GetFullPath().ToStdString());
     std::string username, password;
     
     if(file.is_open()) {
