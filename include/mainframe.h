@@ -5,6 +5,8 @@
 
 #include <wx/wx.h>
 #include <wx/aui/aui.h>
+#include <wx/splitter.h>
+#include <wx/richtext/richtextctrl.h>
 
 class mainFrame : public wxFrame {
     
@@ -24,11 +26,44 @@ class mainFrame : public wxFrame {
         
         // MenuBar END
         
+        
+        
+        wxSplitterWindow* splitter;
+        
+        
+        
+        
+        
         // Notebook START
+        
+        //for title
+        wxStaticText *titleLabel;
+        wxTextCtrl *titleCtrl;
+        
+        wxStaticText *locationLabel;
+        wxTextCtrl *locationCtrl;
+        
+        wxStaticText *dateLabel;
+        wxTextCtrl *dateCtrl;
+        
+        
+        
+        wxBoxSizer *titleBarSizer;
+        
+        
+        wxRichTextCtrl *diaryText;
+        
+        
+        
         
         wxAuiNotebook *noteBook;
         wxPanel *diaryPanel;
         wxPanel *phonebookPanel;
+        
+        
+        
+        
+        
         
         
         
@@ -42,7 +77,7 @@ class mainFrame : public wxFrame {
         
         wxBoxSizer *sizer;
         
-        
+
         
         
         void OnHello(wxCommandEvent& evt);

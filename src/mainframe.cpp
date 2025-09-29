@@ -1,7 +1,9 @@
 #include "../include/mainframe.h"
 #include "../include/logindatadialog.h"
 
-#include <wx/splitter.h>
+
+#include <wx/datetime.h>
+
 
 
 enum {
@@ -96,6 +98,26 @@ void mainFrame::Binding() {
     Bind(wxEVT_MENU, &mainFrame::OnExit, this, wxID_EXIT);
     Bind(wxEVT_MENU, &mainFrame::OnChangeLoginData, this, ID_CHANGE_LOGIN_DATA);
     
+    diaryText->Bind(wxEVT_KEY_DOWN, [=](wxKeyEvent& evt) {
+                    
+                    if(evt.ControlDown()) {
+                        
+                        switch(evt.GetKeyCode()) {
+                            
+                            case 'B':
+                                diaryText->ApplyBoldToSelection();
+                                return;
+                            case 'I':
+                                diaryText->ApplyItalicToSelection();
+                                return;
+                            case 'U':
+                                diaryText->ApplyUnderlineToSelection();
+                                return;
+                        }
+                    }
+                    evt.Skip();
+                });
+    
 }
 
 void mainFrame::OnHello(wxCommandEvent& evt) {
@@ -120,21 +142,72 @@ void mainFrame::OnChangeLoginData(wxCommandEvent& evt) {
 
 void mainFrame::SetupDiaryUI(wxPanel *panel) {
     
-    wxSplitterWindow* splitter = new wxSplitterWindow(panel, wxID_ANY);
-
+    
+    splitter = new wxSplitterWindow(panel, wxID_ANY);
+    
     wxListBox* notesList = new wxListBox(splitter, wxID_ANY);
     notesList->AppendString("2025-09-25: My first note");
     notesList->AppendString("2025-09-26: Another entry");
     notesList->AppendString("2025-09-27: Today's note");
-
-    wxTextCtrl* diaryText = new wxTextCtrl(splitter, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE);
+    
+    
+    
+    
+    wxPanel *diaryPanel = new wxPanel(splitter, wxID_ANY);
+    wxBoxSizer *diarySizer = new wxBoxSizer(wxVERTICAL);
+    
+    
+    //----------------------------------------
+    
+    titleBarSizer = new wxBoxSizer(wxHORIZONTAL);
+    
+    titleLabel = new wxStaticText(diaryPanel, wxID_ANY, "Title:");
+    titleCtrl = new wxTextCtrl(diaryPanel, wxID_ANY, "", wxDefaultPosition, wxDefaultSize);
+    
+    locationLabel = new wxStaticText(diaryPanel, wxID_ANY, "Location: ");
+    locationCtrl = new wxTextCtrl(diaryPanel, wxID_ANY, "", wxDefaultPosition, wxDefaultSize);
+    
+    dateLabel = new wxStaticText(diaryPanel, wxID_ANY, "Date: ");
+    wxString today = wxDateTime::Now().FormatISODate();
+    dateCtrl = new wxTextCtrl(diaryPanel, wxID_ANY, today, wxDefaultPosition, wxDefaultSize, 
+                              wxTE_READONLY);
+    
+    
+    
+    
+    titleBarSizer->Add(titleLabel, 0, wxALL | wxALIGN_CENTER_VERTICAL, 5);
+    titleBarSizer->Add(titleCtrl, 2, wxALL | wxEXPAND, 5);
+    titleBarSizer->Add(locationLabel, 0, wxALL | wxALIGN_CENTER_VERTICAL, 5);
+    titleBarSizer->Add(locationCtrl, 2, wxALL | wxEXPAND, 5);
+    titleBarSizer->Add(dateLabel, 0, wxALL | wxALIGN_CENTER_VERTICAL, 5);
+    titleBarSizer->Add(dateCtrl, 1, wxALL | wxALIGN_CENTER_VERTICAL, 5);
+    
+    
+    //------------------------------------------------------------
+    
+    
+    diaryText = new wxRichTextCtrl(diaryPanel, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 
+                                           wxTE_MULTILINE |
+                                           wxVSCROLL |
+                                           wxHSCROLL |
+                                           wxWANTS_CHARS);
 
     
-    splitter->SplitVertically(notesList, diaryText);
+    
+    diarySizer->Add(titleBarSizer, 0, wxALL | wxEXPAND, 5);
+    diarySizer->Add(diaryText, 1, wxALL | wxEXPAND, 5);
+    
+    
+    
+    
+    
+    diaryPanel->SetSizer(diarySizer);
+    
+    splitter->SplitVertically(notesList, diaryPanel);
 
     
     splitter->SetSashPosition(200);
-    splitter->SetMinimumPaneSize(100); 
+    splitter->SetMinimumPaneSize(400); 
 
     
     wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
@@ -148,7 +221,7 @@ void mainFrame::SetupPhonebookUI(wxPanel *panel) {
     
     wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
 
-    wxStaticText* label = new wxStaticText(panel, wxID_ANY, "Phonebook Tab - Manage contacts here");
+    wxStaticText* label = new wxStaticText(panel, wxID_ANY, "Phonebook Tab");
     sizer->Add(label, 0, wxALL | wxCENTER, 20);
 
     panel->SetSizer(sizer);
