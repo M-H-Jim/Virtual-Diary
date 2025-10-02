@@ -101,9 +101,15 @@ class mainFrame : public wxFrame {
         wxString GetNotesFolderPath();
         void SaveNote(wxCommandEvent& evt);
         void LoadNotes();
+        void OnNoteSelect(wxCommandEvent& evt);
+        
+        void Editable(wxCommandEvent& evt);
+        void Uneditable();
         
         
-        
+        void OnTitleDoubleClick(wxMouseEvent& evt);
+        void OnLocationDoubleClick(wxMouseEvent& evt);
+        void OnDiaryDoubleClick(wxMouseEvent& evt);
         
         
         void Binding();

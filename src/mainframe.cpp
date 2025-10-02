@@ -11,6 +11,7 @@
 enum {
     ID_HELLO = wxID_HIGHEST + 1,
     ID_CHANGE_LOGIN_DATA,
+    ID_EDIT
 };
 
 
@@ -21,7 +22,8 @@ mainFrame::mainFrame(const wxString& title) : wxFrame(NULL, wxID_ANY, title) {
     
     
     menuFile = new wxMenu;
-    menuFile->Append(ID_HELLO, "&Hello...\tCtrl-H", "Help String");
+    menuFile->Append(wxID_NEW, "New Note\tCtrl+N", "Create a new entry");
+    menuFile->Append(ID_HELLO, "&Hello...\tCtrl+H", "Help String");
     //--------------------------------------------------------------
     menuFile->AppendSeparator();
     //--------------------------------------------------------------
@@ -30,6 +32,7 @@ mainFrame::mainFrame(const wxString& title) : wxFrame(NULL, wxID_ANY, title) {
     /*--------------------------------------------------------------*/
     
     menuEdit = new wxMenu;
+    menuEdit->Append(wxID_EDIT, "Edit note\tCtrl+E", "Edit current note");
     menuEdit->Append(wxID_SAVE, "Save\tCtrl+S", "Save the current file");
     
     
@@ -103,21 +106,33 @@ mainFrame::mainFrame(const wxString& title) : wxFrame(NULL, wxID_ANY, title) {
 
 void mainFrame::Binding() {
     
+    Bind(wxEVT_MENU, &mainFrame::Editable, this, wxID_NEW);
     Bind(wxEVT_MENU, &mainFrame::OnHello, this, ID_HELLO);
     Bind(wxEVT_MENU, &mainFrame::OnAbout, this, wxID_ABOUT);
     
     
     
     Bind(wxEVT_MENU, &mainFrame::SaveNote, this, wxID_SAVE);
+    Bind(wxEVT_MENU, &mainFrame::Editable, this, wxID_EDIT);
     
     
-    
+    Bind(wxEVT_LISTBOX, &mainFrame::OnNoteSelect, this, notesList->GetId());
     
     
     
     
     Bind(wxEVT_MENU, &mainFrame::OnExit, this, wxID_EXIT);
     Bind(wxEVT_MENU, &mainFrame::OnChangeLoginData, this, ID_CHANGE_LOGIN_DATA);
+    
+    
+    
+    titleCtrl->Bind(wxEVT_LEFT_DCLICK, &mainFrame::OnTitleDoubleClick, this);
+    locationCtrl->Bind(wxEVT_LEFT_DCLICK, &mainFrame::OnLocationDoubleClick, this);
+    diaryText->Bind(wxEVT_LEFT_DCLICK, &mainFrame::OnDiaryDoubleClick, this);
+    
+    
+    
+    
     
     diaryText->Bind(wxEVT_KEY_DOWN, [=](wxKeyEvent& evt) {
                     
@@ -226,7 +241,7 @@ void mainFrame::SetupDiaryUI(wxPanel *panel) {
 
     
     splitter->SetSashPosition(200);
-    splitter->SetMinimumPaneSize(400); 
+    splitter->SetMinimumPaneSize(200); 
 
     
     wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
@@ -263,21 +278,29 @@ wxString mainFrame::GetNotesFolderPath() {
 
 void mainFrame::SaveNote(wxCommandEvent& evt) {
     
-    wxString title = titleCtrl->GetValue();
-    wxString location = locationCtrl->GetValue();
-    wxString date = dateCtrl->GetValue();
-    wxString text = diaryText->GetValue();
     
+    int c = wxMessageBox("Do you want to save the file?", "Confirm Save",
+                          wxYES_NO | wxICON_QUESTION, this);
     
-    Note note(title, location, date, text);
-    wxString folder = GetNotesFolderPath();
-    
-    if(note.Save(folder)) {
-        wxMessageBox("Note Saved Successfully!", "Success");
-        notesList->AppendString(date + ": " + title);
-    }
-    else {
-        wxMessageBox("Failed to save note.", "Error");
+    if(c == wxYES) {
+            
+        wxString title = titleCtrl->GetValue();
+        wxString location = locationCtrl->GetValue();
+        wxString date = dateCtrl->GetValue();
+        wxString text = diaryText->GetValue();
+        
+        
+        Note note(title, location, date, text);
+        wxString folder = GetNotesFolderPath();
+        
+        if(note.Save(folder)) {
+            wxMessageBox("Note Saved Successfully!", "Success");
+            notesList->AppendString(date + ": " + title);
+        }
+        else {
+            wxMessageBox("Failed to save note.", "Error");
+        }
+            
     }
     
 }
@@ -298,6 +321,105 @@ void mainFrame::LoadNotes() {
     }
     
 }
+
+void mainFrame::Uneditable() {
+    
+    titleCtrl->SetEditable(false);
+    locationCtrl->SetEditable(false);
+    diaryText->SetEditable(false);
+    
+    titleCtrl->SetBackgroundColour(wxColour(240, 240, 240));
+    locationCtrl->SetBackgroundColour(wxColour(240, 240, 240));
+    dateCtrl->SetBackgroundColour(wxColour(240, 240, 240));
+    diaryText->SetBackgroundColour(wxColour(240, 240, 240));
+    
+    titleCtrl->Refresh();
+    locationCtrl->Refresh();
+    diaryText->Refresh();
+        
+}
+
+void mainFrame::Editable(wxCommandEvent& evt) {
+    
+    titleCtrl->SetEditable(true);
+    locationCtrl->SetEditable(true);
+    diaryText->SetEditable(true);
+    
+    titleCtrl->SetBackgroundColour(*wxWHITE);
+    locationCtrl->SetBackgroundColour(*wxWHITE);
+    dateCtrl->SetBackgroundColour(*wxWHITE);
+    diaryText->SetBackgroundColour(*wxWHITE);
+    
+    titleCtrl->Refresh();
+    locationCtrl->Refresh();
+    diaryText->Refresh();
+    
+    if(evt.GetId() == wxID_NEW) {
+        titleCtrl->Clear();
+        locationCtrl->Clear();
+        diaryText->Clear();
+        
+        wxString today = wxDateTime::Now().FormatISODate();
+        dateCtrl->SetValue(today);
+        
+        
+    }
+        
+}
+
+
+void mainFrame::OnTitleDoubleClick(wxMouseEvent& evt) {
+    
+    titleCtrl->SetEditable(true);
+    titleCtrl->SetFocus();
+    titleCtrl->SetBackgroundColour(*wxWHITE);
+    
+    evt.Skip();
+}
+
+void mainFrame::OnLocationDoubleClick(wxMouseEvent& evt) {
+    
+    locationCtrl->SetEditable(true);
+    locationCtrl->SetFocus();
+    locationCtrl->SetBackgroundColour(*wxWHITE);
+    
+    evt.Skip();
+}
+
+void mainFrame::OnDiaryDoubleClick(wxMouseEvent& evt) {
+    
+    diaryText->SetEditable(true);
+    diaryText->SetFocus();
+    diaryText->SetBackgroundColour(*wxWHITE);
+    
+    evt.Skip();
+    
+}
+
+
+
+void mainFrame::OnNoteSelect(wxCommandEvent& evt) {
+    wxString filename = notesList->GetStringSelection();
+    wxString folder = GetNotesFolderPath();
+    
+    Note note;
+    if(note.Load(folder + "/" + filename + ".txt")) {
+        titleCtrl->SetValue(note.GetT());
+        locationCtrl->SetValue(note.GetL());
+        dateCtrl->SetValue(note.GetD());
+        diaryText->SetValue(note.GetText());
+        
+        
+        Uneditable();
+        
+        
+        
+    }
+}
+
+
+
+
 
 
 

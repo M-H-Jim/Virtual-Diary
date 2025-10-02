@@ -12,6 +12,12 @@ class Note {
         wxString text;
         
     public:
+        
+        wxString GetT() { return title; }
+        wxString GetL() { return location; }
+        wxString GetD() { return date; }
+        wxString GetText() { return text; }
+        
             
         Note();
         Note(const wxString& t, const wxString& l, const wxString& d, const wxString& te);
