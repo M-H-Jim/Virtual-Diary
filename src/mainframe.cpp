@@ -1,5 +1,6 @@
 #include "../include/mainframe.h"
 #include "../include/logindatadialog.h"
+#include "../include/note.h"
 
 
 #include <wx/datetime.h>
@@ -8,7 +9,7 @@
 
 enum {
     ID_HELLO = wxID_HIGHEST + 1,
-    ID_CHANGE_LOGIN_DATA
+    ID_CHANGE_LOGIN_DATA,
 };
 
 
@@ -25,12 +26,19 @@ mainFrame::mainFrame(const wxString& title) : wxFrame(NULL, wxID_ANY, title) {
     //--------------------------------------------------------------
     menuFile->Append(wxID_EXIT);
     
+    /*--------------------------------------------------------------*/
+    
+    menuEdit = new wxMenu;
+    menuEdit->Append(wxID_SAVE, "Save\tCtrl+S", "Save the current file");
+    
+    
+    
     
     
     /*--------------------------------------------------------------*/
     
     menuSettings = new wxMenu;
-    menuSettings->Append(ID_CHANGE_LOGIN_DATA, "&Change Username or Password...\tCtrl-S", "Settings");
+    menuSettings->Append(ID_CHANGE_LOGIN_DATA, "&Change Username or Password...\tCtrl-P", "Settings");
     
     
     
@@ -42,6 +50,7 @@ mainFrame::mainFrame(const wxString& title) : wxFrame(NULL, wxID_ANY, title) {
     
     menuBar = new wxMenuBar;
     menuBar->Append(menuFile, "&File");
+    menuBar->Append(menuEdit, "&Edit");
     menuBar->Append(menuSettings, "&Settings");
     menuBar->Append(menuAbout, "&About");
     
@@ -95,6 +104,17 @@ void mainFrame::Binding() {
     
     Bind(wxEVT_MENU, &mainFrame::OnHello, this, ID_HELLO);
     Bind(wxEVT_MENU, &mainFrame::OnAbout, this, wxID_ABOUT);
+    
+    
+    
+    Bind(wxEVT_MENU, &mainFrame::SaveNote, this, wxID_SAVE);
+    
+    
+    
+    
+    
+    
+    
     Bind(wxEVT_MENU, &mainFrame::OnExit, this, wxID_EXIT);
     Bind(wxEVT_MENU, &mainFrame::OnChangeLoginData, this, ID_CHANGE_LOGIN_DATA);
     
@@ -145,7 +165,7 @@ void mainFrame::SetupDiaryUI(wxPanel *panel) {
     
     splitter = new wxSplitterWindow(panel, wxID_ANY);
     
-    wxListBox* notesList = new wxListBox(splitter, wxID_ANY);
+    notesList = new wxListBox(splitter, wxID_ANY);
     notesList->AppendString("2025-09-25: My first note");
     notesList->AppendString("2025-09-26: Another entry");
     notesList->AppendString("2025-09-27: Today's note");
@@ -171,6 +191,9 @@ void mainFrame::SetupDiaryUI(wxPanel *panel) {
     wxString today = wxDateTime::Now().FormatISODate();
     dateCtrl = new wxTextCtrl(diaryPanel, wxID_ANY, today, wxDefaultPosition, wxDefaultSize, 
                               wxTE_READONLY);
+    
+    
+    
     
     
     
@@ -227,6 +250,44 @@ void mainFrame::SetupPhonebookUI(wxPanel *panel) {
     panel->SetSizer(sizer);
     
 }
+
+
+wxString mainFrame::GetNotesFolderPath() {
+    
+    wxFileName exePath(wxStandardPaths::Get().GetExecutablePath());
+    wxString folder = exePath.GetPath() + "/notes";
+    
+    if(!wxDirExists(folder))
+        wxMkdir(folder);
+    
+    return folder;
+}
+
+
+
+void mainFrame::SaveNote(wxCommandEvent& evt) {
+    
+    wxString title = titleCtrl->GetValue();
+    wxString location = locationCtrl->GetValue();
+    wxString date = dateCtrl->GetValue();
+    wxString text = diaryText->GetValue();
+    
+    
+    Note note(title, location, date, text);
+    wxString folder = GetNotesFolderPath();
+    
+    if(note.Save(folder)) {
+        wxMessageBox("Note Saved Successfully!", "Success");
+        notesList->AppendString(date + ": " + title);
+    }
+    else {
+        wxMessageBox("Failed to save note.", "Error");
+    }
+    
+}
+
+
+
 
 
 

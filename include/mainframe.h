@@ -7,6 +7,8 @@
 #include <wx/aui/aui.h>
 #include <wx/splitter.h>
 #include <wx/richtext/richtextctrl.h>
+#include <wx/stdpaths.h>
+#include <wx/filename.h>
 
 class mainFrame : public wxFrame {
     
@@ -21,6 +23,7 @@ class mainFrame : public wxFrame {
         wxMenu *menuFile;
         wxMenu *menuAbout;
         wxMenu *menuSettings;
+        wxMenu *menuEdit;
         
         wxMenuBar *menuBar;
         
@@ -52,6 +55,12 @@ class mainFrame : public wxFrame {
         
         
         wxRichTextCtrl *diaryText;
+        
+        
+        
+        
+        
+        wxListBox* notesList;
         
         
         
@@ -89,7 +98,8 @@ class mainFrame : public wxFrame {
         
         
         
-        
+        wxString GetNotesFolderPath();
+        void SaveNote(wxCommandEvent& evt);
         
         
         
