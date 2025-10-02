@@ -24,6 +24,7 @@
 					<Add library="libwxmsw32ud_core.a" />
 					<Add library="libwxbase32ud.a" />
 					<Add library="libwxmsw32ud_aui.a" />
+					<Add library="libwxmsw32ud_richtext.a" />
 					<Add directory="$(#wx)/lib/gcc_dll" />
 				</Linker>
 			</Target>
@@ -45,6 +46,7 @@
 					<Add library="libwxmsw32u_core.a" />
 					<Add library="libwxbase32u.a" />
 					<Add library="libwxmsw32u_aui.a" />
+					<Add library="libwxmsw32u_richtext.a" />
 					<Add directory="$(#wx)/lib/gcc_dll" />
 				</Linker>
 			</Target>
@@ -68,10 +70,12 @@
 		<Unit filename="include/login.h" />
 		<Unit filename="include/logindatadialog.h" />
 		<Unit filename="include/mainframe.h" />
+		<Unit filename="include/note.h" />
 		<Unit filename="include/virtualdiary.h" />
 		<Unit filename="src/login.cpp" />
 		<Unit filename="src/logindatadialog.cpp" />
 		<Unit filename="src/mainframe.cpp" />
+		<Unit filename="src/note.cpp" />
 		<Unit filename="src/virtualdiary.cpp" />
 		<Unit filename="wx.rc">
 			<Option compilerVar="WINDRES" />
