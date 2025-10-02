@@ -4,6 +4,7 @@
 
 
 #include <wx/datetime.h>
+#include <wx/dir.h>
 
 
 
@@ -80,7 +81,7 @@ mainFrame::mainFrame(const wxString& title) : wxFrame(NULL, wxID_ANY, title) {
     
     
     
-    
+    LoadNotes();
     
     
     CreateStatusBar();
@@ -166,11 +167,6 @@ void mainFrame::SetupDiaryUI(wxPanel *panel) {
     splitter = new wxSplitterWindow(panel, wxID_ANY);
     
     notesList = new wxListBox(splitter, wxID_ANY);
-    notesList->AppendString("2025-09-25: My first note");
-    notesList->AppendString("2025-09-26: Another entry");
-    notesList->AppendString("2025-09-27: Today's note");
-    
-    
     
     
     wxPanel *diaryPanel = new wxPanel(splitter, wxID_ANY);
@@ -287,7 +283,21 @@ void mainFrame::SaveNote(wxCommandEvent& evt) {
 }
 
 
-
+void mainFrame::LoadNotes() {
+    
+    wxString folder = GetNotesFolderPath();
+    wxDir dir(folder);
+    
+    if(!dir.IsOpened()) return;
+    
+    wxString filename;
+    bool c = dir.GetFirst(&filename, "*.txt");
+    while(c) {
+        notesList->AppendString(filename.BeforeLast('.'));
+        c = dir.GetNext(&filename);
+    }
+    
+}
 
 
 

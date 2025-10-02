@@ -100,6 +100,7 @@ class mainFrame : public wxFrame {
         
         wxString GetNotesFolderPath();
         void SaveNote(wxCommandEvent& evt);
+        void LoadNotes();
         
         
         
