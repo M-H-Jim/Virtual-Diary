@@ -103,8 +103,12 @@ class mainFrame : public wxFrame {
         void LoadNotes();
         void OnNoteSelect(wxCommandEvent& evt);
         
+        
         void Editable(wxCommandEvent& evt);
-        void Uneditable();
+        
+        
+        void EditableDiary(wxCommandEvent& evt);
+        void UneditableDiary();
         
         
         void OnTitleDoubleClick(wxMouseEvent& evt);

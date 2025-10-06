@@ -34,7 +34,7 @@ class loginDialog : public wxDialog {
         wxButton *cancelButton;
         
         
-        
+        wxStaticBitmap *logobitmap;
         
         
         

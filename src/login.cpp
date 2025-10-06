@@ -15,12 +15,23 @@ loginDialog::loginDialog(const wxString& title) : wxDialog(NULL, wxID_ANY, "Logi
     
     sizer = new wxBoxSizer(wxVERTICAL);
     
+    wxInitAllImageHandlers();
+
+    
+    
+    wxImage logoImg("img/logo.png", wxBITMAP_TYPE_PNG);
+    logoImg = logoImg.Scale(256, 128, wxIMAGE_QUALITY_NEAREST);  
+    logobitmap = new wxStaticBitmap(this, wxID_ANY, wxBitmap(logoImg));
+
+    
+    
+    
     usernameStatic = new wxStaticText(this, wxID_ANY, "Username: ");
     usernameCtrl = new wxTextCtrl(this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize);
     passwordStatic = new wxStaticText(this, wxID_ANY, "Password: ");
     passwordCtrl = new wxTextCtrl(this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize);
     
-    
+    sizer->Add(logobitmap, 0, wxALIGN_CENTER | wxALL, 10);
     sizer->Add(usernameStatic, 0, wxALL, 5);
     sizer->Add(usernameCtrl, 0, wxEXPAND | wxALL, 5);
     sizer->Add(passwordStatic, 0, wxALL, 5);

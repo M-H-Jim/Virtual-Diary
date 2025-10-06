@@ -63,18 +63,6 @@ bool Note::Load(const wxString& filePath) {
 }
 
 
-//wxString Note::GetNotesFolderPath() {
-//    wxString folder = wxStandardPaths::Get().GetUserLocalDataDir() + "/notes";
-//    if(!wxFileName::DirExists(folder)) {
-//        wxFileName::Mkdir(folder, wxS)
-//    }
-//}
-//
-
-
-
-
-
 
 
 

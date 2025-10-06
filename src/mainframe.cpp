@@ -3,6 +3,7 @@
 #include "../include/note.h"
 
 
+#include <wx/aboutdlg.h>
 #include <wx/datetime.h>
 #include <wx/dir.h>
 
@@ -19,6 +20,14 @@ enum {
 
 
 mainFrame::mainFrame(const wxString& title) : wxFrame(NULL, wxID_ANY, title) {
+    
+    
+    wxIcon appIcon;
+    appIcon.LoadFile("img/favicon.png", wxBITMAP_TYPE_PNG);
+    SetIcon(appIcon);
+        
+    
+    
     
     
     menuFile = new wxMenu;
@@ -149,6 +158,9 @@ void mainFrame::Binding() {
                             case 'U':
                                 diaryText->ApplyUnderlineToSelection();
                                 return;
+                            case 'T':
+                                diaryText->ApplyTextEffectToSelection(wxTEXT_ATTR_EFFECT_STRIKETHROUGH);
+                                return;
                         }
                     }
                     evt.Skip();
@@ -161,7 +173,19 @@ void mainFrame::OnHello(wxCommandEvent& evt) {
 }
 
 void mainFrame::OnAbout(wxCommandEvent& evt) {
-    wxMessageBox("This is my Uni Project", "About ME", wxOK | wxICON_INFORMATION);
+    
+    wxAboutDialogInfo info;
+    
+    info.SetName("Virtual Diary");
+    info.SetVersion("1.0.0");
+    info.SetDescription(" A lightweight, personal diary app");
+    info.SetCopyright("(c) 2025 M.H.Jim");
+    info.SetWebSite("https://website.com", "Visit Project Website");
+    info.AddDeveloper("M.H.Jim");
+
+    wxAboutBox(info);
+    
+    
 }
 
 void mainFrame::OnExit(wxCommandEvent& evt) {
@@ -295,12 +319,12 @@ void mainFrame::SaveNote(wxCommandEvent& evt) {
         
         if(note.Save(folder)) {
             wxMessageBox("Note Saved Successfully!", "Success");
-            notesList->AppendString(date + ": " + title);
+            notesList->Clear();
+            LoadNotes();
         }
         else {
             wxMessageBox("Failed to save note.", "Error");
         }
-            
     }
     
 }
@@ -322,7 +346,44 @@ void mainFrame::LoadNotes() {
     
 }
 
-void mainFrame::Uneditable() {
+
+void mainFrame::Editable(wxCommandEvent& evt) {
+    
+    int currentPage = noteBook->GetSelection();
+    
+    switch(currentPage) {
+        
+        case 0:
+            EditableDiary(evt);
+            break;
+        
+        
+        
+        
+        default:
+            break;
+        
+        
+        
+        
+        
+    }
+    
+    
+}
+
+
+
+
+
+
+
+
+
+
+
+
+void mainFrame::UneditableDiary() {
     
     titleCtrl->SetEditable(false);
     locationCtrl->SetEditable(false);
@@ -339,7 +400,7 @@ void mainFrame::Uneditable() {
         
 }
 
-void mainFrame::Editable(wxCommandEvent& evt) {
+void mainFrame::EditableDiary(wxCommandEvent& evt) {
     
     titleCtrl->SetEditable(true);
     locationCtrl->SetEditable(true);
@@ -410,7 +471,7 @@ void mainFrame::OnNoteSelect(wxCommandEvent& evt) {
         diaryText->SetValue(note.GetText());
         
         
-        Uneditable();
+        UneditableDiary();
         
         
         

@@ -4,19 +4,19 @@
 
 
 
-
-
 wxIMPLEMENT_APP(virtualDiary);
 
 bool virtualDiary::OnInit() {
     
     loginDialog *login = new loginDialog("Login");
+    login->Center();
     
     if(login->ShowModal() == wxID_OK) {
             
         mainFrame *frame = new mainFrame("Virtual Diary");
         SetTopWindow(frame);
         frame->SetClientSize(800, 600);
+        frame->SetMinSize(wxSize(800, 600));
         frame->Show(true);
         delete login;
         
