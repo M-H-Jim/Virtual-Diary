@@ -116,6 +116,22 @@ class mainFrame : public wxFrame {
         void OnDiaryDoubleClick(wxMouseEvent& evt);
         
         
+        // Phonebook start
+        
+        
+        wxSplitterWindow *phonebookSplitter;
+        
+        
+        wxListBox *peopleList;
+        
+        
+        
+        
+        
+        // Phonebook end
+        
+        
+        
         void Binding();
     
     

@@ -277,12 +277,46 @@ void mainFrame::SetupDiaryUI(wxPanel *panel) {
 
 void mainFrame::SetupPhonebookUI(wxPanel *panel) {
     
-    wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
+//    wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
+//
+//    wxStaticText* label = new wxStaticText(panel, wxID_ANY, "Phonebook Tab");
+//    sizer->Add(label, 0, wxALL | wxCENTER, 20);
+//
+//    panel->SetSizer(sizer);
+    
+    
+    
+    phonebookSplitter = new wxSplitterWindow(panel, wxID_ANY);
+    
+    
+    peopleList = new wxListBox(phonebookSplitter, wxID_ANY);
+    
+    
+    
+    
+    wxPanel *phonebookPanel = new wxPanel(phonebookSplitter, wxID_ANY);
+    
+    
+    wxBoxSizer *phonebookSizer = new wxBoxSizer(wxVERTICAL);
+    
+    phonebookPanel->SetSizer(phonebookSizer);
+    
+    
+    
+    phonebookSplitter->SplitVertically(phonebookPanel, peopleList);
 
-    wxStaticText* label = new wxStaticText(panel, wxID_ANY, "Phonebook Tab");
-    sizer->Add(label, 0, wxALL | wxCENTER, 20);
-
-    panel->SetSizer(sizer);
+    
+    phonebookSplitter->SetSashPosition(1200);
+    phonebookSplitter->SetMinimumPaneSize(400); 
+    
+    
+    
+    wxBoxSizer* psizer = new wxBoxSizer(wxVERTICAL);
+    psizer->Add(phonebookSplitter, 1, wxEXPAND);
+    panel->SetSizer(psizer);
+    
+    
+    
     
 }
 
