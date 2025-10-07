@@ -103,7 +103,6 @@ class mainFrame : public wxFrame {
         
         
         
-        
         void SetupDiaryUI(wxPanel *panel);
         void SetupPhonebookUI(wxPanel *panel);
         
