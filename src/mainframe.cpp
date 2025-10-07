@@ -1,3 +1,25 @@
+/* 
+ * Copyright (C) 2025 M.H.Jim
+ *
+ * This file is part of Virtual Diary.
+ *
+ * Virtual Diary is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * Virtual Diary is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Virtual Diary; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+ */
+
+
+
 #include "../include/mainframe.h"
 #include "../include/logindatadialog.h"
 #include "../include/note.h"
@@ -32,7 +54,6 @@ mainFrame::mainFrame(const wxString& title) : wxFrame(NULL, wxID_ANY, title) {
     
     menuFile = new wxMenu;
     menuFile->Append(wxID_NEW, "New Note\tCtrl+N", "Create a new entry");
-    menuFile->Append(ID_HELLO, "&Hello...\tCtrl+H", "Help String");
     //--------------------------------------------------------------
     menuFile->AppendSeparator();
     //--------------------------------------------------------------
@@ -43,6 +64,7 @@ mainFrame::mainFrame(const wxString& title) : wxFrame(NULL, wxID_ANY, title) {
     menuEdit = new wxMenu;
     menuEdit->Append(wxID_EDIT, "Edit note\tCtrl+E", "Edit current note");
     menuEdit->Append(wxID_SAVE, "Save\tCtrl+S", "Save the current file");
+    menuEdit->Append(wxID_DELETE, "Delete\tDel", "Delete current file");
     
     
     
@@ -79,12 +101,12 @@ mainFrame::mainFrame(const wxString& title) : wxFrame(NULL, wxID_ANY, title) {
     diaryPanel = new wxPanel(noteBook);
     SetupDiaryUI(diaryPanel);
     
-    phonebookPanel = new wxPanel(noteBook);
-    SetupPhonebookUI(phonebookPanel);
+//    phonebookPanel = new wxPanel(noteBook);
+//    SetupPhonebookUI(phonebookPanel);
     
     
     noteBook->AddPage(diaryPanel, "Diary");
-    noteBook->AddPage(phonebookPanel, "Phonebook");
+//    noteBook->AddPage(phonebookPanel, "Phonebook");
     
     
     sizer = new wxBoxSizer(wxVERTICAL);
@@ -116,13 +138,13 @@ mainFrame::mainFrame(const wxString& title) : wxFrame(NULL, wxID_ANY, title) {
 void mainFrame::Binding() {
     
     Bind(wxEVT_MENU, &mainFrame::Editable, this, wxID_NEW);
-    Bind(wxEVT_MENU, &mainFrame::OnHello, this, ID_HELLO);
     Bind(wxEVT_MENU, &mainFrame::OnAbout, this, wxID_ABOUT);
     
     
     
     Bind(wxEVT_MENU, &mainFrame::SaveNote, this, wxID_SAVE);
     Bind(wxEVT_MENU, &mainFrame::Editable, this, wxID_EDIT);
+    Bind(wxEVT_MENU, &mainFrame::OnDeleteNote, this, wxID_DELETE);
     
     
     Bind(wxEVT_LISTBOX, &mainFrame::OnNoteSelect, this, notesList->GetId());
@@ -161,6 +183,28 @@ void mainFrame::Binding() {
                             case 'T':
                                 diaryText->ApplyTextEffectToSelection(wxTEXT_ATTR_EFFECT_STRIKETHROUGH);
                                 return;
+                            
+                            
+                            case WXK_ADD:
+                            case '=':
+                            case WXK_SUBTRACT:
+                            case '-':
+                            {
+                                auto range = diaryText->GetSelectionRange();
+                                if (range.GetLength() == 0) break;
+
+                                wxTextAttr attr;
+                                diaryText->GetStyle(range.GetStart(), attr);
+                                int size = attr.GetFontSize() > 0 ? attr.GetFontSize() : 10;
+
+                                size += (evt.GetKeyCode() == WXK_ADD || evt.GetKeyCode() == '=') ? 1 : -1;
+                                if (size < 1) break;
+
+                                attr.SetFontSize(size);
+                                diaryText->SetStyle(range, attr);
+                                return;
+                            }
+                            
                         }
                     }
                     evt.Skip();
@@ -168,9 +212,6 @@ void mainFrame::Binding() {
     
 }
 
-void mainFrame::OnHello(wxCommandEvent& evt) {
-    wxLogMessage("Hello from virtual Diary");
-}
 
 void mainFrame::OnAbout(wxCommandEvent& evt) {
     
@@ -249,6 +290,7 @@ void mainFrame::SetupDiaryUI(wxPanel *panel) {
                                            wxVSCROLL |
                                            wxHSCROLL |
                                            wxWANTS_CHARS);
+
 
     
     
@@ -362,6 +404,73 @@ void mainFrame::SaveNote(wxCommandEvent& evt) {
     }
     
 }
+
+
+void mainFrame::MoveFileToTrash(const wxString& filePath) {
+    wxFileName exePath(wxStandardPaths::Get().GetExecutablePath());
+    wxString exeDir = exePath.GetPath();
+
+    wxString trashFolder = exeDir + "/trash";
+    wxFileName fn(filePath);
+    wxString newPath = trashFolder + "/" + fn.GetFullName();
+
+    if (!wxRenameFile(filePath, newPath, true)) {
+        wxMessageBox("Failed to move file to trash", "Error", wxOK | wxICON_ERROR);
+    }
+}
+
+
+
+
+
+void mainFrame::OnDeleteNote(wxCommandEvent& evt) {
+    
+    
+    wxFileName exePath(wxStandardPaths::Get().GetExecutablePath());
+    wxString exeDir = exePath.GetPath();
+
+    wxString trashFolder = exeDir + "/trash";
+    if (!wxDirExists(trashFolder)) {
+        wxMkdir(trashFolder);
+    }
+        
+    
+    
+    
+    wxString selectedNote = notesList->GetStringSelection();
+    if (selectedNote.IsEmpty()) {
+        wxMessageBox("Please select a note to delete.", "Error", wxOK | wxICON_ERROR);
+        return;
+    }
+
+    wxString filePath = GetNotesFolderPath() + "/" + selectedNote + ".txt";
+
+    int answer = wxMessageBox("Are you sure you want to delete this note?", "Confirm Delete", 
+                              wxYES_NO | wxICON_QUESTION);
+    if (answer == wxYES) {
+        MoveFileToTrash(filePath);
+        notesList->Clear();
+        LoadNotes();
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 void mainFrame::LoadNotes() {

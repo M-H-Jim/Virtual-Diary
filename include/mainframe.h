@@ -1,3 +1,25 @@
+/* 
+ * Copyright (C) 2025 M.H.Jim
+ *
+ * This file is part of Virtual Diary.
+ *
+ * Virtual Diary is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * Virtual Diary is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Virtual Diary; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+ */
+
+
+
 #ifndef MAINFRAME_H
 #define MAINFRAME_H
 
@@ -7,8 +29,14 @@
 #include <wx/aui/aui.h>
 #include <wx/splitter.h>
 #include <wx/richtext/richtextctrl.h>
+#include <wx/richtext/richtextstyles.h>
 #include <wx/stdpaths.h>
 #include <wx/filename.h>
+
+
+#include <wx/colour.h>
+#include <wx/font.h>
+
 
 class mainFrame : public wxFrame {
     
@@ -89,7 +117,6 @@ class mainFrame : public wxFrame {
 
         
         
-        void OnHello(wxCommandEvent& evt);
         void OnExit(wxCommandEvent& evt);
         void OnAbout(wxCommandEvent& evt);
         void OnChangeLoginData(wxCommandEvent& evt);
@@ -100,6 +127,8 @@ class mainFrame : public wxFrame {
         
         wxString GetNotesFolderPath();
         void SaveNote(wxCommandEvent& evt);
+        void MoveFileToTrash(const wxString& filePath);
+        void OnDeleteNote(wxCommandEvent& evt);
         void LoadNotes();
         void OnNoteSelect(wxCommandEvent& evt);
         
